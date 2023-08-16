@@ -68,18 +68,22 @@ export default function Home() {
                     {loading && (
                         <Spinner animation="border" variant="primary" />
                     )}
-                    {!loading && allMeetings && allMeetings.map((meeting) => (
-                        <MeetingDetailsCard 
-                            key={meeting.id}
-                            meetingId = {meeting.id}
-                            name={meeting.meeting_name}
-                            duration={meeting.event_duration}
-                            location={meeting.location}
-                            link={`${window.location.origin}/bookmeeting/${meeting.id}`}
-                        />
-                    ))}
-                        
-                </Row>    
+                    {!loading && allMeetings && allMeetings.length > 0 ? (
+                        allMeetings.map((meeting) => (
+                            <MeetingDetailsCard 
+                                key={meeting.id}
+                                meetingId={meeting.id}
+                                name={meeting.meeting_name}
+                                duration={meeting.event_duration}
+                                location={meeting.location}
+                                link={`${window.location.origin}/bookmeeting/${meeting.id}`}
+                            />
+                        ))
+                    ) : (
+                        <p>You have no meetings yet. Click the New Link button to create one!</p>
+                    )}
+                </Row>
+  
             </Container> 
         </>
     )

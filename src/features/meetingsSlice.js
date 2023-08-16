@@ -5,6 +5,28 @@ import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { db, storage } from '../firebase';
 import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 
+// su's part from here
+// update name and profile pic
+export const updateUserInfo = createAsyncThunk(
+  'user/updateUserInfo',
+  async ({ id, name, profile_picture }, thunkAPI) => {
+    try {
+      const response = await axios.put(
+        `https://capstone-project-api.chungmangjie200.repl.co/users/${id}`,
+        {
+          name,
+          profile_picture,
+        }
+      );
+      console.log('user updated');
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+// till here
+
 //Async thunk to send both 'meetings' and 'availability' data to backend
 export const postMeetingData = createAsyncThunk(
   'meeting/postMeetingData',
