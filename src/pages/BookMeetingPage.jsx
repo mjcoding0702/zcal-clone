@@ -1,13 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { createGuestMeeting, fetchGuestMeeting, fetchMeetingById, sendEmail } from "../features/meetingsSlice";
+import { createGuestMeeting, fetchGuestMeeting, fetchMeetingById, googleCalMeeting, sendEmail } from "../features/meetingsSlice";
 import { Spinner } from "react-bootstrap";
 import { AuthContext } from "../components/AuthProvider";
 import Button from '@mui/material/Button';
 import { DatePicker, DateTimePicker, StaticDateTimePicker, TimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { Chip, InputBase, Paper, TextField } from "@mui/material";
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 
 
 
@@ -21,7 +23,9 @@ export default function BookMeetingPage() {
     const guestMeeting = useSelector(state => state.meeting.guestMeeting)
     const [formSubmitted, setFormSubmitted] = useState(false);
 
-    console.log(meeting)
+    dayjs.extend(utc);
+    dayjs.extend(timezone);
+
     // Dispatch fetchGuestMeeting when the component mounts
     useEffect(() => {
         dispatch(fetchGuestMeeting(meetingId));
@@ -40,7 +44,6 @@ export default function BookMeetingPage() {
 
     useEffect(() => {
       if (meeting && meeting.availability && guestMeeting) {
-        console.log('Guest Meeting Data:', guestMeeting);
         const dates = [];
         const timeSlots = {};
     
@@ -66,15 +69,14 @@ export default function BookMeetingPage() {
           const bookedTimes = guestMeeting
             .filter(gm => dayjs(gm.booked_date).format('YYYY-MM-DD') === date)
             .map(gm => gm.booked_time.slice(0, 5)); // Extracting 'HH:mm' part
-            console.log('Booked Times for date', date, ':', bookedTimes);
           
             // Before filtering
-            console.log('Time Slots before filtering for date', date, ':', timeSlots[date]);
+            // console.log('Time Slots before filtering for date', date, ':', timeSlots[date]);
 
             timeSlots[date] = timeSlots[date].filter(time => !bookedTimes.includes(time));
 
             // After filtering
-            console.log('Time Slots after filtering for date', date, ':', timeSlots[date]);
+            // console.log('Time Slots after filtering for date', date, ':', timeSlots[date]);
 
         });
     
@@ -83,6 +85,8 @@ export default function BookMeetingPage() {
       }
     }, [meeting, guestMeeting]);
     
+
+
     
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -91,8 +95,7 @@ export default function BookMeetingPage() {
         alert('Please select a date and time.');
         return;
       }
-      console.log(value);
-      const bookedDate = dayjs(value).format('YYYY-MM-DD');
+      const bookedDate = dayjs(selectedDate).format('YYYY-MM-DD');
       const bookedTime = dayjs(value).format('HH:mm:ss');
     
       // Combine the main email with the guest emails
@@ -129,15 +132,42 @@ export default function BookMeetingPage() {
         </html>
       `;
 
+      //Zapier google calander content
+      const eventDuration = meeting.event_duration;
+
+      // Concatenate the date and time
+      const startDateTimeLocal = `${bookedDate}T${bookedTime}`;
+
+      // Create a dayjs object with the desired timezone offset
+      const startDateTimeWithTimezone = dayjs(startDateTimeLocal).tz('Asia/Singapore'); // for GMT+8
+
+      // Format the date-time strings, including the timezone offset
+      const startDateTime = startDateTimeWithTimezone.format(); // Will be in the format 2023-08-23T10:00:00+08:00
+      const endDateTime = startDateTimeWithTimezone.add(eventDuration, 'minutes').format();
+
+      // Create the Google Calendar data
+      const googleCalData = {
+        summary: meeting.meeting_name,
+        description: meeting.description,
+        location: meeting.custom_url,
+        startDateTime: startDateTime,
+        endDateTime: endDateTime,
+        attendees: guestEmails,
+        reminder: (meeting.reminder_days).toString()
+      };
+
+      console.log(googleCalData)
 
       setSubmitting(true); // Set submitting to true to disable the button and change the text
     
       try {
         await dispatch(createGuestMeeting({ guestMeetingData })); // Dispatch the action
-        await dispatch(sendEmail({to:guestEmails, subject, html:content})); // Notice the change to html
+        await dispatch(sendEmail({to: guestEmails, subject, html: content})); // Notice the change to html
+        await dispatch(googleCalMeeting(googleCalData))
       
         alert("Booked successfully! Confirmation email has been sent!");
         setFormSubmitted(true);
+        window.location.reload();
       } catch (error) {
         console.error(error);
         alert("There was an error booking the meeting or sending the email. Please try again.");
@@ -170,9 +200,7 @@ export default function BookMeetingPage() {
       if (view === 'minutes') {
         const timeStr = dayjs(value).format('HH:mm');
         const isDisabled = !timeSlots.includes(timeStr);
-        if (isDisabled) {
-          console.log(`Time slot ${timeStr} on date ${dateStr} is disabled.`);
-        }
+        
         return isDisabled;
       }
     

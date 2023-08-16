@@ -141,9 +141,9 @@ const MeetingForm = () => {
           <Form.Group controlId="meetingReminderDays">
             <Form.Label>Email Reminder</Form.Label>
             <Form.Select name="reminder_days" value={meeting.reminder_days} onChange={handleChange} required>
-              <option value="1">1 day before the meeting</option>
-              <option value="2">2 days before the meeting</option>
-              <option value="3">3 days before the meeting</option>
+              <option value="30">30 minutes before the meeting</option>
+              <option value="60">60 minutes before the meeting</option>
+              <option value="120">120 minutes before the meeting</option>
             </Form.Select>
           </Form.Group>
 

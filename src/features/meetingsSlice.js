@@ -2,7 +2,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { storage } from '../firebase';
+import { db, storage } from '../firebase';
+import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 
 //Async thunk to send both 'meetings' and 'availability' data to backend
 export const postMeetingData = createAsyncThunk(
@@ -50,8 +51,6 @@ export const postMeetingData = createAsyncThunk(
 export const updateMeetingData = createAsyncThunk(
   'meeting/updateMeetingData',
   async ({ id, meetingData }, thunkAPI) => {
-    console.log("async thunk")
-    console.log(meetingData)
     try {
       let imageURL = "";
 
@@ -78,9 +77,6 @@ export const updateMeetingData = createAsyncThunk(
       )).filter(slot => slot.start_time && slot.end_time); // Only include slots with both start_time and end_time
 
 
-      console.log(flattenedAvailability)
-
-
       const response = await axios.put(`https://capstone-project-api.chungmangjie200.repl.co/meetings/${id}`, {
         ...meetingData,
         meeting: {
@@ -105,7 +101,6 @@ export const fetchMeetingById = createAsyncThunk(
     'meetings/fetchMeetingById',
     async(meetingId) => {
         const response = await axios.get(`https://capstone-project-api.chungmangjie200.repl.co/api/meetings/${meetingId}`);
-        console.log(response)
         return response.data
     }
 )
@@ -167,10 +162,8 @@ export const createGuestMeeting = createAsyncThunk(
 export const fetchGuestMeeting = createAsyncThunk(
   'guest/fetchGuestMeeting',
   async (meetingId) => {
-    console.log("slice: ", meetingId)
     try {
       const response = await axios.get(`https://capstone-project-api.chungmangjie200.repl.co/fetchguestmeeting/${meetingId}`);
-      console.log(response.data)
       return response.data;
     } catch (error) {
       console.log(error);
@@ -179,12 +172,10 @@ export const fetchGuestMeeting = createAsyncThunk(
   }
 );
 
+//Async thunk to send email using NodeMailer
 export const sendEmail = createAsyncThunk(
   'guest/sendEmail',
   async ({to, subject, html}, thunkAPI) => {
-    console.log(to)
-    console.log(subject)
-    console.log(html)
 
     try {
       const response = await axios.post(`https://capstone-project-api.chungmangjie200.repl.co/sendemail`, {to, subject, html});
@@ -203,6 +194,27 @@ export const sendEmail = createAsyncThunk(
   }
 );
 
+//Async thunk to create google calander meeting
+export const googleCalMeeting = createAsyncThunk(
+  'guest/googleCalMeeting',
+  async (googleCalData, thunkAPI) => {
+    try {
+      const guestMeetingsRef = collection(db, 'guestMeetings');
+
+      const newGuestMeetingRef = doc(guestMeetingsRef);
+
+      await setDoc(newGuestMeetingRef, googleCalData)
+
+      const newGuestMeeting = await getDoc(newGuestMeetingRef);
+
+      console.log(newGuestMeeting.data())
+    } catch(error) {
+      console.log(error)
+      return thunkAPI.rejectWithValue(error.response?.data || 'An error occurred while creating google calander meeting');
+    }
+  }
+)
+
 
 //Synchronous 
 const meetingSlice = createSlice({
@@ -217,7 +229,7 @@ const meetingSlice = createSlice({
       event_duration: '30',
       time_slot_increment: '30',
       date_range: '7',
-      reminder_days: '1',
+      reminder_days: '30',
       user_uid: '',
     },
     loading: true, // add loading to track request status
@@ -239,7 +251,7 @@ const meetingSlice = createSlice({
         event_duration: '30',
         time_slot_increment: '30',
         date_range: '7',
-        reminder_days: '1',
+        reminder_days: '30',
         user_uid: '',
       };
     },
