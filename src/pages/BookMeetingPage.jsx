@@ -95,6 +95,17 @@ export default function BookMeetingPage() {
         alert('Please select a date and time.');
         return;
       }
+
+      const selectedDateStr = dayjs(selectedDate).format('YYYY-MM-DD');
+      const selectedTime = dayjs(value).format('HH:mm');
+      const timeSlots = allowedTimeSlots[selectedDateStr];
+
+      // Check if the selected time is not in the allowed time slots
+      if (!timeSlots || !timeSlots.includes(selectedTime)) {
+        alert('The selected time is not available. Please choose a different time.');
+        return;
+  }
+
       const bookedDate = dayjs(selectedDate).format('YYYY-MM-DD');
       const bookedTime = dayjs(value).format('HH:mm:ss');
     
@@ -158,6 +169,8 @@ export default function BookMeetingPage() {
 
       console.log(googleCalData)
 
+      
+
       setSubmitting(true); // Set submitting to true to disable the button and change the text
     
       try {
@@ -187,25 +200,33 @@ export default function BookMeetingPage() {
     const shouldDisableTime = (value, view) => {
       if (!value) return true; // Disable time if value is not defined
     
-      const dateStr = dayjs(value).format('YYYY-MM-DD');
+      const dateStr = dayjs(selectedDate).format('YYYY-MM-DD');
       const timeSlots = allowedTimeSlots[dateStr];
       if (!timeSlots) return true;
     
       if (view === 'hours') {
         const hour = dayjs(value).hour();
         const disableHour = !timeSlots.some(slot => parseInt(slot.split(':')[0]) === hour);
+        if (disableHour) {
+          console.log(`Hour disabled: ${hour} for date ${dateStr}`);
+        }
         return disableHour;
       }
     
       if (view === 'minutes') {
         const timeStr = dayjs(value).format('HH:mm');
         const isDisabled = !timeSlots.includes(timeStr);
-        
+    
+        if (isDisabled) {
+          console.log(`Time slot disabled: ${timeStr} for date ${dateStr}`);
+        }
+    
         return isDisabled;
       }
     
       return false;
     };
+    
 
     //Email
     const [emails, setEmails] = useState([]);
@@ -310,6 +331,7 @@ export default function BookMeetingPage() {
                           label="Enter guest email (optional)"
                           variant="outlined"
                           fullWidth
+                          className="mb-3"
                           type="text"
                           value={inputValue}
                           onChange={handleInputChange}
@@ -325,8 +347,6 @@ export default function BookMeetingPage() {
                               overflowX: 'auto',
                               padding: '5px',
                               alignItems: 'center',
-                              position: 'absolute',
-                              top: '56px',
                               width: '100%',
                             }}
                           >
@@ -338,7 +358,7 @@ export default function BookMeetingPage() {
                                 style={{ margin: '5px' }}
                               />
                             ))}
-                            <InputBase style={{ minWidth: '100px' }} placeholder="Add more emails..." />
+                            <InputBase style={{ minWidth: '100px' }} disabled/>
                           </Paper>
                         )}
                       </div>
