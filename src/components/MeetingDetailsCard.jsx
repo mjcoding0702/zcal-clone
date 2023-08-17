@@ -18,7 +18,13 @@ export default function MeetingDetailsCard({ name, duration, location, link, mee
     };
 
     const handleDelete = (meetingId) => {
+      // Ask the user for confirmation before deleting
+      const userConfirmed = window.confirm('Are you sure you want to delete this meeting? This action cannot be undone.');
+    
+      // If the user clicks "OK", proceed with the deletion
+      if (userConfirmed) {
         dispatch(deleteMeetingById(meetingId));
+      }
     }
 
     const handleNavigateEdit = (meetingId) => {

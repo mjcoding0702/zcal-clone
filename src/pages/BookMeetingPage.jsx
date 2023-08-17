@@ -274,7 +274,7 @@ export default function BookMeetingPage() {
                       </div>
                       <div className="d-flex">
                         <i className="bi bi-link-45deg me-2"></i>
-                        <p className="text-muted mb-2">{(meeting && meeting.custom_url) || 'Loading...'}</p>
+                        <a className="text-muted mb-2" href={meeting.custom_url || null}>{(meeting && meeting.custom_url) || 'Loading...'}</a>
                       </div>
                     </div>
                     <hr></hr>
