@@ -17,7 +17,7 @@ export default function Home() {
     useEffect(() => {
         if(!currentUser){
          navigate('/login');
-        } else {
+        } else if (currentUser) {
             dispatch(fetchMeetingsByUser(currentUser.uid));
             dispatch(fetchUser(currentUser.uid));
         }
@@ -60,10 +60,6 @@ export default function Home() {
                             <i className="bi bi-info-circle" style={{ opacity: 0.5 }}></i>
                         </OverlayTrigger>
                     </Col>
-
-                    <Col className="d-flex align-items-center justify-content-end">
-                        <a href="#" className="text-blue text-decoration-none">View all invites</a>
-                    </Col>
                 </Row>  
 
                 <Row className="px-2">
@@ -81,7 +77,7 @@ export default function Home() {
                             />
                         ))
                     ) : (
-                        <p>You have no meetings yet. Click the New Link button to create one!</p>
+                        <p>You have no meetings yet. Try to reload or Click the New Link button to create one!</p>
                     )}
                 </Row>
             </Container> 
