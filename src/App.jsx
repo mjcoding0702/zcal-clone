@@ -27,6 +27,8 @@ import { useSelector } from 'react-redux/es/hooks/useSelector';
 
 function Layout() {
   const { currentUser } = useContext(AuthContext);
+  const backupProfileURL = 'https://firebasestorage.googleapis.com/v0/b/clone-4b31b.appspot.com/o/profile-backup.png?alt=media&token=8a063fcb-f324-48c2-b66a-91f80f914a5a'
+
   // Su's part from here
   const user = useSelector((state) => state.meeting.user);
   const icon = user.userDetails?.profile_picture;
@@ -56,20 +58,10 @@ function Layout() {
           {currentUser && !location.pathname.startsWith('/bookmeeting') && (
             // su's part from here
             <Dropdown>
-              <Dropdown.Toggle
-                variant='light'
-                id='dropdown-basic'
-                style={{
-                  width: '50px',
-                  height: '50px',
-                  overflow: 'hidden',
-                  borderRadius: '50%',
-                  backgroundColor: 'initial', // or set it to the background color you want
-                }}
-              >
+              <Dropdown.Toggle as="a" className="nav-link px-2 pointer-cursor" style={{color: 'black', cursor: 'pointer'}} >
                 <img
-                  src={iconCleaned}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  src={iconCleaned || backupProfileURL}
+                  width={35} className='rounded-circle' alt='profilePicture'
                 />
               </Dropdown.Toggle>
 

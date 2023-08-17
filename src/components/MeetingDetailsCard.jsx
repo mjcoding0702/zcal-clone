@@ -29,10 +29,19 @@ export default function MeetingDetailsCard({ name, duration, location, link, mee
     <>
       <Col xs={12} md={6} lg={4} className="mb-4">
         <Card>
-          <Card.Body className="d-flex justify-content-between align-items-end py-4">
-            <div>
+          <Card.Body className="row justify-content-between align-items-end py-4 w-100">
+            <div className="col-8">
               <i className="bi bi-person text-primary fs-4"></i>
-              <Card.Title>{name}</Card.Title>
+              <Card.Title style={{
+                height: '25px',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                textOverflow: 'ellipsis',
+                width: '100%', // Ensure it takes full width
+                display: 'block' // Needed for the text-overflow to work
+              }}>
+                {name}
+              </Card.Title>
               <Card.Text className="text-muted">
                 {duration <= 60 ? `${duration} min`: `${duration/60} hour(s)`}
                 <br /> 
@@ -43,8 +52,8 @@ export default function MeetingDetailsCard({ name, duration, location, link, mee
                 </a>
               </Card.Text>
             </div>
-            <div>
-              <Button variant="primary" className="ms-2">
+            <div className="col-4 d-flex p-0 justify-content-end">
+              <Button variant="primary">
                 <i className="bi bi-pencil-square" onClick={() => handleNavigateEdit(meetingId)}></i>
               </Button>
               <Button variant="danger" className="ms-2">

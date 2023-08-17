@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Button, Container, Form, Modal, Spinner } from 'react-bootstrap';
+import { Button, Container, Form, Modal, OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { fetchMeetingById, saveMeeting } from '../features/meetingsSlice';
@@ -26,6 +26,7 @@ const MeetingForm = () => {
     }
   },[meetingId, dispatch])
 
+  //Handle Change will save all fields to synchronous state
   const handleChange = (event) => {
     const { name, value } = event.target;
     let convertedValue = value;
@@ -60,11 +61,6 @@ const MeetingForm = () => {
     dispatch(saveMeeting({ ...meeting, [name]: convertedValue, user_uid: currentUser.uid }));  
   };
   
-  // Handle cover photo
-  const handleFileChange = (event) => {
-    dispatch(saveMeeting({ ...meeting, cover_photo: event.target.files[0] })); // Dispatch the saveMeeting action
-  };
-  
   //After user clicked "next" button, bring them to continue filling up form
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -80,37 +76,76 @@ const MeetingForm = () => {
       <Container>
         <h1 className='mb-4'>Create a meeting invite link!</h1>
           <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="meetingName">
-            <Form.Label>Meeting Name</Form.Label>
+          <Form.Group controlId="meetingName" className='mb-3'>
+            <OverlayTrigger
+                placement="right"
+                overlay={
+                    <Tooltip>
+                        The name will be shown on your invite page and in your calendar event
+                    </Tooltip>
+                }
+            >
+              <Form.Label>Meeting Name<i className="bi bi-info-circle ms-2" style={{ opacity: 0.5 }}></i></Form.Label>
+            </OverlayTrigger>
             <Form.Control type="text" name="meeting_name" value={meeting.meeting_name} onChange={handleChange} required/>
           </Form.Group>
           
-          <Form.Group controlId="meetingLocation">
-            <Form.Label>Meeting Location</Form.Label>
+          <Form.Group controlId="meetingLocation" className='mb-3'>
+            <OverlayTrigger
+                placement="right"
+                overlay={
+                    <Tooltip>
+                        Where the meeting will take place
+                    </Tooltip>
+                }
+            >
+              <Form.Label>Meeting Location<i className="bi bi-info-circle ms-2" style={{ opacity: 0.5 }}></i></Form.Label>
+            </OverlayTrigger>
             <Form.Select name="location" value={meeting.location} onChange={handleChange} required>
               <option value="zoom">Zoom</option>
               <option value="google_meet">Google Meet</option>
-              <option value="phone_call">Phone Call</option>
             </Form.Select>
           </Form.Group>
 
-          <Form.Group controlId="meetingDescription">
-            <Form.Label>Meeting Description</Form.Label>
+          <Form.Group controlId="meetingDescription" className='mb-3'>
+            <OverlayTrigger
+                placement="right"
+                overlay={
+                    <Tooltip>
+                        The description is shown on your invite page and in your calendar event.
+                    </Tooltip>
+                }
+            >
+              <Form.Label>Meeting Description<i className="bi bi-info-circle ms-2" style={{ opacity: 0.5 }}></i></Form.Label>
+            </OverlayTrigger>
             <Form.Control type="text" name="description" value={meeting.description} onChange={handleChange} required/>
           </Form.Group>
 
-          <Form.Group controlId="meetingCustomUrl">
-            <Form.Label>Custom URL</Form.Label>
+          <Form.Group controlId="meetingCustomUrl" className='mb-3'>
+            <OverlayTrigger
+                placement="right"
+                overlay={
+                    <Tooltip>
+                        Add your customized meeting link URL, eg: Your Zoom meeting link
+                    </Tooltip>
+                }
+            >
+              <Form.Label>Custom URL<i className="bi bi-info-circle ms-2" style={{ opacity: 0.5 }}></i></Form.Label>
+            </OverlayTrigger>
             <Form.Control type="text" name="custom_url" value={meeting.custom_url} onChange={handleChange} required/>
           </Form.Group>
 
-          <Form.Group controlId="meetingCoverPhoto">
-            <Form.Label>Cover Photo</Form.Label>
-            <Form.Control type="file" name="cover_photo" onChange={handleFileChange} />
-          </Form.Group>
-
-          <Form.Group controlId="meetingEventDuration">
-            <Form.Label>Event Duration</Form.Label>
+          <Form.Group controlId="meetingEventDuration" className='mb-3'>
+            <OverlayTrigger
+                placement="right"
+                overlay={
+                    <Tooltip>
+                        How long the meeting will take. It can be as short as 15 minutes or as long as 3 hours
+                    </Tooltip>
+                }
+            >
+              <Form.Label>Event Duration<i className="bi bi-info-circle ms-2" style={{ opacity: 0.5 }}></i></Form.Label>
+            </OverlayTrigger>
             <Form.Select name="event_duration" value={meeting.event_duration} onChange={handleChange} required>
               <option value="15">15 minutes</option>
               <option value="30">30 minutes</option>
@@ -120,8 +155,17 @@ const MeetingForm = () => {
             </Form.Select>
           </Form.Group>
 
-          <Form.Group controlId="meetingTimeSlotIncrement">
-            <Form.Label>Time Slot Increment</Form.Label>
+          <Form.Group controlId="meetingTimeSlotIncrement" className='mb-3'>
+            <OverlayTrigger
+                placement="right"
+                overlay={
+                    <Tooltip>
+                        How frequently time slots are displayed. For example, a 30 minute increment creates slots 9:00am, 9:30am, 10:00am... while a 60 minute increment create slots 9:00am, 10:00am, 11:00am...
+                    </Tooltip>
+                }
+            >
+              <Form.Label>Time Slot Increment<i className="bi bi-info-circle ms-2" style={{ opacity: 0.5 }}></i></Form.Label>
+            </OverlayTrigger>
             <Form.Select name="time_slot_increment" value={meeting.time_slot_increment} onChange={handleChange} required>
               <option value="15">15 minutes</option>
               <option value="30">30 minutes</option>
@@ -129,8 +173,17 @@ const MeetingForm = () => {
             </Form.Select>
           </Form.Group>
 
-          <Form.Group controlId="meetingDateRange">
-            <Form.Label>Date Range</Form.Label>
+          <Form.Group controlId="meetingDateRange" className='mb-3'>
+            <OverlayTrigger
+                placement="right"
+                overlay={
+                    <Tooltip>
+                        The dates when the meeting can be scheduled by your guests.
+                    </Tooltip>
+                }
+            >
+              <Form.Label>Date Range<i className="bi bi-info-circle ms-2" style={{ opacity: 0.5 }}></i></Form.Label>
+            </OverlayTrigger>
             <Form.Select name="date_range" value={meeting.date_range} onChange={handleChange} required>
               <option value="3">3 days into the future</option>
               <option value="7">1 week into the future</option>
@@ -138,14 +191,24 @@ const MeetingForm = () => {
             </Form.Select>
           </Form.Group>
 
-          <Form.Group controlId="meetingReminderDays">
-            <Form.Label>Email Reminder</Form.Label>
+          <Form.Group controlId="meetingReminderDays" className='mb-3'>
+            <OverlayTrigger
+                placement="right"
+                overlay={
+                    <Tooltip>
+                        Send a reminder email to event attendees before they are scheduled to meet with you
+                    </Tooltip>
+                }
+            >
+              <Form.Label>Email Reminder<i className="bi bi-info-circle ms-2" style={{ opacity: 0.5 }}></i></Form.Label>
+            </OverlayTrigger>
             <Form.Select name="reminder_days" value={meeting.reminder_days} onChange={handleChange} required>
               <option value="30">30 minutes before the meeting</option>
               <option value="60">60 minutes before the meeting</option>
               <option value="120">120 minutes before the meeting</option>
             </Form.Select>
           </Form.Group>
+
 
           <Button variant="primary" type="submit" className='mt-3'>
             Next

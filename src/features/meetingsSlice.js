@@ -32,14 +32,6 @@ export const postMeetingData = createAsyncThunk(
   'meeting/postMeetingData',
   async (meetingData, thunkAPI) => {
     try {
-      let imageURL = "";
-
-      if (meetingData.meeting.cover_photo) {
-        const imageRef = ref(storage, `meetings/${meetingData.meeting.cover_photo.name}`);
-        const response = await uploadBytes(imageRef, meetingData.meeting.cover_photo);
-        imageURL = await getDownloadURL(response.ref);
-      }
-
       // Flatten the availability data structure and filter out dates without timeslots
       const flattenedAvailability = meetingData.availability.flatMap(date => (
         date.slots.map(slot => ({
@@ -54,13 +46,9 @@ export const postMeetingData = createAsyncThunk(
         ...meetingData,
         meeting: {
           ...meetingData.meeting,
-          cover_photo: imageURL,
         },
         availability: flattenedAvailability,
       });
-
-      // Remove the File object from the state
-      thunkAPI.dispatch(saveMeeting({ ...meetingData.meeting, cover_photo: imageURL }));
 
       return response.data;
     } catch (error) {
@@ -74,14 +62,6 @@ export const updateMeetingData = createAsyncThunk(
   'meeting/updateMeetingData',
   async ({ id, meetingData }, thunkAPI) => {
     try {
-      let imageURL = "";
-
-      if (meetingData.meeting.cover_photo) {
-        const imageRef = ref(storage, `meetings/${meetingData.meeting.cover_photo.name}`);
-        const response = await uploadBytes(imageRef, meetingData.meeting.cover_photo);
-        imageURL = await getDownloadURL(response.ref);
-      }
-
       // Flatten the availability data structure and filter out dates without timeslots
       const flattenedAvailability = meetingData.availability.flatMap(date => (
         date.slots.map((slot, slotIndex) => {
@@ -103,13 +83,9 @@ export const updateMeetingData = createAsyncThunk(
         ...meetingData,
         meeting: {
           ...meetingData.meeting,
-          cover_photo: imageURL,
         },
         availability: flattenedAvailability,
       });
-
-      // Remove the File object from the state
-      thunkAPI.dispatch(saveMeeting({ ...meetingData.meeting, cover_photo: imageURL }));
 
       return response.data;
     } catch (error) {
@@ -247,7 +223,6 @@ const meetingSlice = createSlice({
       location: 'zoom',
       description: '',
       custom_url: '',
-      cover_photo: '',
       event_duration: '30',
       time_slot_increment: '30',
       date_range: '7',
@@ -269,7 +244,6 @@ const meetingSlice = createSlice({
         location: 'zoom',
         description: '',
         custom_url: '',
-        cover_photo: '',
         event_duration: '30',
         time_slot_increment: '30',
         date_range: '7',

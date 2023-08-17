@@ -21,7 +21,7 @@ export default function Home() {
             dispatch(fetchMeetingsByUser(currentUser.uid));
             dispatch(fetchUser(currentUser.uid));
         }
-    },[currentUser])
+    },[currentUser, navigate])
 
     //Get meeting details from redux store
     const allMeetings = useSelector(state => state.meeting.allMeetings);
@@ -36,7 +36,9 @@ export default function Home() {
             <Container>
                 <Row className="my-4 d-flex align-items-center">
                     <Col xs={7}>
-                        <h1>{user && user.userDetails && user.userDetails.name}</h1>
+                        <h1 className="fs-3 fs-md-2 fs-lg-1">{user && user.userDetails && (
+                            `Welcome back, ${user.userDetails.name}`
+                        )}</h1>
                     </Col>
 
                     <Col xs={5} className="d-flex align-items-center justify-content-end">
@@ -65,10 +67,9 @@ export default function Home() {
                 </Row>  
 
                 <Row className="px-2">
-                    {loading && (
+                    {loading ? (
                         <Spinner animation="border" variant="primary" />
-                    )}
-                    {!loading && allMeetings && allMeetings.length > 0 ? (
+                    ) : allMeetings && allMeetings.length > 0 ? (
                         allMeetings.map((meeting) => (
                             <MeetingDetailsCard 
                                 key={meeting.id}
@@ -83,6 +84,7 @@ export default function Home() {
                         <p>You have no meetings yet. Click the New Link button to create one!</p>
                     )}
                 </Row>
+
   
             </Container> 
         </>

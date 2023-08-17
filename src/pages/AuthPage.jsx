@@ -44,10 +44,12 @@ export default function AuthPage() {
     
 
     //Reset password
-    const handleResetPasswordEmail = async() => {
+    const handleResetPasswordEmail = async(e) => {
+        e.preventDefault();
         try{
-            alert("Email to reset password sent!")
             await sendPasswordResetEmail(auth, email)
+            alert("Email to reset password sent!")
+            window.location.reload();
         } catch(error){
             console.log(error);
         }
@@ -116,7 +118,7 @@ export default function AuthPage() {
     let buttonText = "Sign Up";
     if (modalShow === "Login") {
         buttonText = "Login";
-    } else if (modalShow === "Reset Password") {
+    } else if (modalShow === "Reset") {
         buttonText = "Reset Password";
     }
 
