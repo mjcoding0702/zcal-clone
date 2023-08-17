@@ -48,7 +48,7 @@ export default function Home() {
 
                 <Row className="my-5">
                     <Col>
-                        <span className="fw-medium fs-4 me-2">Invites</span>
+                        <span className="fw-medium fs-4 me-2">All Invites</span>
                         <OverlayTrigger
                             placement="right"
                             overlay={
