@@ -41,7 +41,7 @@ export default function ProfilePage() {
     setImgToUpload(e.target.files[0]);
   };
 
-  // upload pic to firebase storaage and get link
+  // upload pic to firebase storage and get link
   const handleUploadAndSubmit = async () => {
     setIsLoading(true);
     console.log(imgToUpload);
@@ -105,6 +105,7 @@ export default function ProfilePage() {
               type='file'
               accept='image/*'
               onChange={handleProfilePicChange}
+              disabled={isLoading}
             />
           )}
         </div>
@@ -116,6 +117,7 @@ export default function ProfilePage() {
                 type='text'
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
+                disabled={isLoading}
                 placeholder='Enter new username'
               />
             ) : (
@@ -130,13 +132,13 @@ export default function ProfilePage() {
         <div className='d-flex flex-row gap-2'>
           {editing ? (
             <>
-              <Button onClick={handleUploadAndSubmit}>
+              <Button onClick={handleUploadAndSubmit} disabled={isLoading}>
                 {isLoading ? 'Saving...' : 'Save'}
               </Button>
-              <Button onClick={handleCancel}>Cancel</Button>
+              <Button onClick={handleCancel} disabled={isLoading}>Cancel</Button>
             </>
           ) : (
-            <Button onClick={handleEdit}>Edit</Button>
+            <Button onClick={handleEdit} disabled={isLoading}>Edit</Button>
           )}
         </div>
       </Col>
