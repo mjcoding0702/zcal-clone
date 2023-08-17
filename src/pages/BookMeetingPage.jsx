@@ -256,7 +256,7 @@ export default function BookMeetingPage() {
             <div className="container d-flex justify-content-center align-items-center min-vh-100" style={{maxWidth: '1200px'}}>
               <div className="row border p-3 bg-white shadow rounded-5 w-100">
                 <div className="profile col-12 col-md-4 col-xl-5 p-3 border">
-                  <img src={(meeting && meeting.profile_picture) || backupProfileURL} alt="rexlogo" className="img-fluid" style={{width: '70px'}}/>
+                  <img src={(meeting && meeting.profile_picture) || backupProfileURL} alt="profilePic" className="img-fluid rounded-circle" style={{width: '80px'}}/>
                   <div className="mt-3">
                     <h1 className="fs-4">{(meeting && meeting.meeting_name) || 'Loading...'}</h1>
                     <div className="mt-4">
