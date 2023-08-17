@@ -21,7 +21,7 @@ export default function Home() {
             dispatch(fetchMeetingsByUser(currentUser.uid));
             dispatch(fetchUser(currentUser.uid));
         }
-    },[currentUser, navigate])
+    },[currentUser, navigate, dispatch])
 
     //Get meeting details from redux store
     const allMeetings = useSelector(state => state.meeting.allMeetings);
@@ -84,8 +84,6 @@ export default function Home() {
                         <p>You have no meetings yet. Click the New Link button to create one!</p>
                     )}
                 </Row>
-
-  
             </Container> 
         </>
     )

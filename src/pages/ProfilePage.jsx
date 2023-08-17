@@ -15,6 +15,7 @@ export default function ProfilePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const backupProfileURL = 'https://firebasestorage.googleapis.com/v0/b/clone-4b31b.appspot.com/o/profile-backup.png?alt=media&token=8a063fcb-f324-48c2-b66a-91f80f914a5a'
 
   useEffect(() => {
     if (!currentUser) {
@@ -84,8 +85,6 @@ export default function ProfilePage() {
   const handleCancel = () => {
     setEditing(false);
   };
-  
-  const defaultPic = 'src\\assets\\rexlogo.PNG'
 
   return (
     <Container>
@@ -94,10 +93,10 @@ export default function ProfilePage() {
         {/* profile pic */}
         <h1 className='mb-5'>Your Profile</h1>
         <div className='d-flex flex-column align-items-center gap-4 mb-4'>
-          <div style={{ width: 200, height: 200, borderRadius: '50%', overflow: 'hidden' }}>
+          <div className="border border-dark" style={{ width: 200, height: 200, borderRadius: '50%', overflow: 'hidden'}}>
             <img
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              src={user.userDetails?.profile_picture || defaultPic}
+              src={user.userDetails?.profile_picture || backupProfileURL}
               alt='User Profile'
             />
           </div>

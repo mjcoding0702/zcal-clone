@@ -1,10 +1,4 @@
-import {
-  BrowserRouter,
-  Outlet,
-  Route,
-  Routes,
-  useLocation,
-} from 'react-router-dom';
+import {BrowserRouter,Outlet,Route,Routes,useLocation} from 'react-router-dom';
 import { AuthContext, AuthProvider } from './components/AuthProvider';
 import AuthPage from './pages/AuthPage';
 import { auth } from './firebase';
@@ -17,7 +11,7 @@ import store from './store';
 import CreateSuccessPage from './pages/CreateSuccessPage';
 import BookMeetingPage from './pages/BookMeetingPage';
 import Home from './pages/Home';
-import { clearAllMeetings, resetMeeting } from './features/meetingsSlice';
+import { clearAllMeetings, clearUser, resetMeeting } from './features/meetingsSlice';
 import { resetAvailability } from './features/availabilitySlice';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -43,6 +37,7 @@ function Layout() {
     dispatch(clearAllMeetings());
     dispatch(resetAvailability());
     dispatch(resetMeeting());
+    dispatch(clearUser());
   };
 
   return (

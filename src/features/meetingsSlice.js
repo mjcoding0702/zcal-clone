@@ -1,32 +1,10 @@
-// meetingSlice.js
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { db, storage } from '../firebase';
+import { db } from '../firebase';
 import { collection, doc, getDoc, setDoc } from 'firebase/firestore';
 
-// su's part from here
-// update name and profile pic
-export const updateUserInfo = createAsyncThunk(
-  'user/updateUserInfo',
-  async ({ id, name, profile_picture }, thunkAPI) => {
-    try {
-      const response = await axios.put(
-        `https://capstone-project-api.chungmangjie200.repl.co/users/${id}`,
-        {
-          name,
-          profile_picture,
-        }
-      );
-      console.log('user updated');
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  }
-);
-// till here
 
+//------------- Meetings ---------------------
 //Async thunk to send both 'meetings' and 'availability' data to backend
 export const postMeetingData = createAsyncThunk(
   'meeting/postMeetingData',
@@ -129,6 +107,7 @@ export const deleteMeetingById = createAsyncThunk(
   }
 )
 
+//------------- Users ---------------------
 //Async thunk to fetch user details
 export const fetchUser = createAsyncThunk(
   'user/fetchUser',
@@ -142,6 +121,27 @@ export const fetchUser = createAsyncThunk(
   }
 )
 
+// Async thunk to update name and profile pic
+export const updateUserInfo = createAsyncThunk(
+  'user/updateUserInfo',
+  async ({ id, name, profile_picture }, thunkAPI) => {
+    try {
+      const response = await axios.put(
+        `https://capstone-project-api.chungmangjie200.repl.co/users/${id}`,
+        {
+          name,
+          profile_picture,
+        }
+      );
+      console.log('user updated');
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
+//------------- Guest Meeting ---------------------
 //Async thunk to create a guest meeting
 export const createGuestMeeting = createAsyncThunk(
   'guest/createGuestMeeting',
@@ -170,6 +170,7 @@ export const fetchGuestMeeting = createAsyncThunk(
   }
 );
 
+//------------- Third party API ---------------------
 //Async thunk to send email using NodeMailer
 export const sendEmail = createAsyncThunk(
   'guest/sendEmail',
@@ -214,7 +215,7 @@ export const googleCalMeeting = createAsyncThunk(
 )
 
 
-//Synchronous 
+//------------- Synchronous actions & Reducers ---------------------
 const meetingSlice = createSlice({
   name: 'meeting',
   initialState: {
@@ -253,9 +254,12 @@ const meetingSlice = createSlice({
     },
     clearAllMeetings: (state) => {
       state.allMeetings = [];
+    },
+    clearUser: (state) => {
+      state.user = {};
     }
   },
-  //Asynchronous
+  //------------- Asynchronous Reducers ---------------------
   extraReducers: (builder) => {
     builder
       .addCase(postMeetingData.fulfilled, (state, action) => {
@@ -263,12 +267,13 @@ const meetingSlice = createSlice({
         // Add any other state changes you need on success
       })
       .addCase(fetchMeetingById.fulfilled, (state,action) => {
-        state.loading = false;
         state.meeting = action.payload;
+        state.loading = false;
       })
       .addCase(fetchMeetingsByUser.fulfilled, (state, action) => {
-        state.loading = false;
         state.allMeetings = action.payload
+        state.loading = false;
+
       })
       .addCase(deleteMeetingById.fulfilled, (state, action) => {
         const meetingId = action.payload
@@ -280,8 +285,9 @@ const meetingSlice = createSlice({
         // Add any other state changes you need on success
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
-        state.loading = false;
         state.user = action.payload;
+        state.loading = false;
+
       })
       .addCase(createGuestMeeting.fulfilled, (state,action) => {
         state.status = 'succeeded';
@@ -292,6 +298,6 @@ const meetingSlice = createSlice({
   }
 });
 
-export const { saveMeeting, resetMeeting, clearAllMeetings } = meetingSlice.actions;
+export const { saveMeeting, resetMeeting, clearAllMeetings, clearUser } = meetingSlice.actions;  //Export synchronous actions
 
 export default meetingSlice.reducer;

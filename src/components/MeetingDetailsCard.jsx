@@ -37,8 +37,8 @@ export default function MeetingDetailsCard({ name, duration, location, link, mee
                 overflow: 'hidden',
                 whiteSpace: 'nowrap',
                 textOverflow: 'ellipsis',
-                width: '100%', // Ensure it takes full width
-                display: 'block' // Needed for the text-overflow to work
+                width: '100%', 
+                display: 'block' 
               }}>
                 {name}
               </Card.Title>

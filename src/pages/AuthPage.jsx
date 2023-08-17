@@ -1,20 +1,21 @@
 import { useContext, useEffect, useState } from "react";
-import { Button, Col, Image, Row, Form, Modal } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import {auth, storage} from "../firebase"
 import { AuthContext } from "../components/AuthProvider";
-import { FacebookAuthProvider, GoogleAuthProvider, createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup } from "@firebase/auth";
+import { createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithEmailAndPassword} from "@firebase/auth";
 import axios from "axios";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import '../styles/AuthPage.css'
 
-
 export default function AuthPage() {
+    //Modal
     const [modalShow, setModalShow] = useState(null);
     const handleShowSignUp = () => setModalShow("SignUp");
     const handleShowLogin = () => setModalShow("Login");
     const handleResetPassword = () => setModalShow("Reset");
 
+    //UseState for form
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
@@ -28,7 +29,6 @@ export default function AuthPage() {
     const handleImageChange = (e) => {
         setImageToUpload(e.target.files[0]);
       };
-    
 
     //Firebase
     const navigate = useNavigate();
@@ -137,26 +137,26 @@ export default function AuthPage() {
                 <div className="row border p-3 bg-white shadow rounded-5 box-area">
                     <div className="col-md-6  d-flex justify-content-center border rounded-4 align-items-center flex-column left-box">
                         <div className="featured-image mb-3 mt-2">
-                            <img src="https://firebasestorage.googleapis.com/v0/b/clone-4b31b.appspot.com/o/login_youtube.png?alt=media&token=ddb5893c-c234-44f2-ae16-85a13c39d4d8" className="img-fluid" alt="Youtube logo" style={{width:'250px'}} />
-                            <p className="text-black fs-2 my-2 fw-medium">Broadcast Yourself</p>
-                            <small className="text-black text-wrap text-center" style={{width: '17rem'}}>Inspire others with your story</small>
+                            <img src="https://firebasestorage.googleapis.com/v0/b/mentor-mentee-booking-system.appspot.com/o/meetings%2Fdownload.png?alt=media&token=d7898c68-1a0d-4ae8-9499-52d128e314fd" className="img-fluid" alt="Youtube logo" style={{width:'250px'}} />
+                            <p className="text-black fs-4 my-2 fw-medium mt-3">Scheduling that puts people first.</p>
+                            <small className="text-black text-wrap text-center fs-6" style={{width: '17rem'}}>Create your own schedules today</small>
                         </div>
                     </div>
 
                     <div className="col-md-6 pb-0 pb-md-3 p-3 p-md-5">
                         <div className="row align-items-center">
                             <div className="header-text mb-4 d-flex flex-column align-items-center">
-                                <i className="bi bi-youtube " style={{fontSize: 50, color: "red"}}></i>
-                                <p className="fw-medium fs-3 mb-2">Ready to Shine?</p>
-                                <p>Login to YouTube Clone</p>
-                                <Button className="rounded-pill w-100" variant="outline-dark" onClick={handleShowSignUp}>Create an account</Button>
+                                <i className="bi bi-calendar-week" style={{fontSize: 50, color: "#5D81F7"}}></i>
+                                <p className="fw-medium fs-5 fw-bold mb-1">Create an account</p>
+                                <p>Sign up to save 10x of your time</p>
+                                <Button className="rounded-pill w-100" variant="outline-primary" onClick={handleShowSignUp}>Create an account</Button>
 
                                 <p className="mt-5" style={{fontWeight: "bold"}}>Already have an account?</p>
-                                <Button className="rounded-pill w-100 mb-2" variant="outline-dark" onClick={handleShowLogin}>
+                                <Button className="rounded-pill w-100 mb-2" variant="outline-primary" onClick={handleShowLogin}>
                                     Sign in
                                 </Button>
 
-                                <Button className="rounded-pill w-100" variant="outline-dark" onClick={handleResetPassword}>
+                                <Button className="rounded-pill w-100" variant="outline-primary" onClick={handleResetPassword}>
                                     Reset Password
                                 </Button> 
                             </div>
@@ -224,14 +224,9 @@ export default function AuthPage() {
                     <Button className='rounded-pill' variant='outline-primary' type="submit" disabled={isButtonDisabled}>
                         {buttonText}
                     </Button>
-
-                    
                 </Form>
                 </Modal.Body>
             </Modal>
-        
         </>
-
-        
     )
 }

@@ -3,7 +3,7 @@ import { Container } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchUser, resetMeeting } from '../features/meetingsSlice';
 import { resetAvailability } from '../features/availabilitySlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { AuthContext } from '../components/AuthProvider';
 
 function CreateSuccessPage() {
@@ -17,15 +17,16 @@ function CreateSuccessPage() {
   useEffect(() => {
     dispatch(resetMeeting());
     dispatch(resetAvailability());
+    dispatch(fetchUser(currentUser.uid));
     setIsDrawn(true);
-  },[])
+  },[currentUser.uid, dispatch])
 
   //Log user out
   useEffect(() => {
     if(!currentUser){
       navigate('/login');
     }
-  },[currentUser])
+  },[currentUser, navigate])
 
   return (
     <>
@@ -61,6 +62,7 @@ function CreateSuccessPage() {
           }
         `}
       </style>
+
       <Container className='center-container d-flex flex-column align-items-center' style={{marginTop: '200px'}}>
         <div className={isDrawn ? 'trigger drawn' : 'trigger'}></div>
         <svg version="1.1" id="tick" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -74,7 +76,6 @@ function CreateSuccessPage() {
         <h1 className='my-4 text-center'>Meeting Created Successfully!</h1>
         <p className='fs-5 text-center'>Your meeting invite link: <a href={`/bookmeeting/${meetingId}`}>/bookmeeting/{meetingId}</a></p>
       </Container>
-    
     </>
   );
 }

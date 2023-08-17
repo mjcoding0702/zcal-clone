@@ -2,22 +2,23 @@ import { useContext, useEffect, useState } from 'react';
 import { Button, Container, Form, Modal, OverlayTrigger, Spinner, Tooltip } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { fetchMeetingById, saveMeeting } from '../features/meetingsSlice';
+import { fetchMeetingById, fetchUser, saveMeeting } from '../features/meetingsSlice';
 import { AuthContext } from '../components/AuthProvider';
 
 const MeetingForm = () => {
-  const meeting = useSelector(state => state.meeting.meeting); // Select state.meeting.meeting
+  const meeting = useSelector(state => state.meeting.meeting); 
   const {currentUser} = useContext(AuthContext);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const {meetingId} = useParams();
 
-
   useEffect(() => {
     if(!currentUser){
       navigate('/login');
+    } else {
+      dispatch(fetchUser(currentUser.uid));
     }
-  },[currentUser])
+  },[currentUser, navigate, dispatch])
 
   //Edit feature: fetch meeting detaiils
   useEffect(() => {
@@ -87,7 +88,7 @@ const MeetingForm = () => {
             >
               <Form.Label>Meeting Name<i className="bi bi-info-circle ms-2" style={{ opacity: 0.5 }}></i></Form.Label>
             </OverlayTrigger>
-            <Form.Control type="text" name="meeting_name" value={meeting.meeting_name} onChange={handleChange} required/>
+            <Form.Control type="text" name="meeting_name" value={meeting.meeting_name} onChange={handleChange} required placeholder="Eg: React 1hr"/>
           </Form.Group>
           
           <Form.Group controlId="meetingLocation" className='mb-3'>
@@ -118,7 +119,7 @@ const MeetingForm = () => {
             >
               <Form.Label>Meeting Description<i className="bi bi-info-circle ms-2" style={{ opacity: 0.5 }}></i></Form.Label>
             </OverlayTrigger>
-            <Form.Control type="text" name="description" value={meeting.description} onChange={handleChange} required/>
+            <Form.Control type="text" name="description" value={meeting.description} onChange={handleChange} required placeholder="Eg: In this call, we will be discussing topics related to ReactJS. Hope to talk to you real soon!"/>
           </Form.Group>
 
           <Form.Group controlId="meetingCustomUrl" className='mb-3'>
@@ -132,7 +133,7 @@ const MeetingForm = () => {
             >
               <Form.Label>Custom URL<i className="bi bi-info-circle ms-2" style={{ opacity: 0.5 }}></i></Form.Label>
             </OverlayTrigger>
-            <Form.Control type="text" name="custom_url" value={meeting.custom_url} onChange={handleChange} required/>
+            <Form.Control type="text" name="custom_url" value={meeting.custom_url} onChange={handleChange} required placeholder='Eg: https://your-meeting-link.com'/>
           </Form.Group>
 
           <Form.Group controlId="meetingEventDuration" className='mb-3'>
