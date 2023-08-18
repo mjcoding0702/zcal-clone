@@ -103,16 +103,17 @@ function AvailabilityForm() {
           }
         });
         break;
-      case 'weekdays':
-        newAvailability.forEach(day => {
-          if (!isWeekend(new Date(day.date))) {
-            day.slots.forEach(slot => {
-              slot.start_time = selectedStartTime;
-              slot.end_time = selectedEndTime;
-            });
-          }
-        });
-        break;
+        case 'weekdays':
+          newAvailability.forEach(day => {
+            const date = new Date(day.date);
+            if (!isWeekend(date) && (date.getDay() !== 0)) { // Exclude weekends and Sunday
+              day.slots.forEach(slot => {
+                slot.start_time = selectedStartTime;
+                slot.end_time = selectedEndTime;
+              });
+            }
+          });
+          break;
       default:
         break;
     }
@@ -123,8 +124,8 @@ function AvailabilityForm() {
   const addSlotInModal = () => {
     const newAvailability = [...availability];
     newAvailability[currentSlot.dateIndex].slots.push({
-      start_time: '',
-      end_time: '',
+      start_time: '09:00',
+      end_time: '17:00',
     });
     setAvailability(newAvailability);
   };
@@ -145,24 +146,26 @@ function AvailabilityForm() {
   
   //Handle Change
   const handleChange = (dateIndex, slotIndex, event) => {
-    const newAvailability = [...availability];
-    const slot = newAvailability[dateIndex].slots[slotIndex];
-    const previousValue = slot[event.target.name]; // Store the previous value
-    slot[event.target.name] = event.target.value;
-  
-    if (event.target.name === 'start_time' && slot.end_time) {
-      const startTime = slot.start_time;
-      const endTime = slot.end_time;
-  
-      if (startTime && endTime && startTime >= endTime) {
-        alert(`Start time must be before end time for date index ${dateIndex} and slot index ${slotIndex}`);
-        slot.start_time = previousValue; // Revert to the previous value
-      } else {
-        handleTimeChange(dateIndex, slotIndex);
-      }
-    }
-    setAvailability(newAvailability);
-  };
+  const newAvailability = [...availability];
+  const slot = newAvailability[dateIndex].slots[slotIndex];
+  const previousValue = slot[event.target.name]; // Store the previous value
+  slot[event.target.name] = event.target.value;
+
+  const startTime = slot.start_time;
+  const endTime = slot.end_time;
+  const selectedDate = format(new Date(newAvailability[dateIndex].date), 'MMMM do yyyy'); // Add this line
+
+  if ((event.target.name === 'start_time' || event.target.name === 'end_time') && startTime && endTime && startTime >= endTime) {
+    const fieldName = event.target.name === 'start_time' ? 'start time' : 'end time';
+    alert(`The ${fieldName} you have selected is invalid for ${selectedDate}. Please make sure the start time is before the end time.`);
+    slot[event.target.name] = previousValue; // Revert to the previous value
+  } else {
+    handleTimeChange(dateIndex, slotIndex);
+  }
+
+  setAvailability(newAvailability);
+};
+
   
   //Navigate user back to meeting page
   const handleBack = () => {
